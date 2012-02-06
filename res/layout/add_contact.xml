@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#ffffffff" >
+
+    <RelativeLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true" >
+
+        <include layout="@layout/contact_desc" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="fill_parent"
+        android:layout_height="40dp"
+        android:layout_alignParentBottom="true" 
+        android:background="@drawable/foot_icon"
+        android:orientation="horizontal" >  
+        <ImageButton
+            android:id="@+id/home_iv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_marginLeft="100dip"
+            android:layout_marginTop="1dip"
+            android:background="@drawable/home" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_below="@id/home_iv"
+            android:layout_marginLeft="95dip"
+            android:text="@string/home"
+            android:textColor="#ff000000" />
+
+        <ImageButton
+            android:id="@+id/save_iv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="100dip"
+            android:background="@drawable/save" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_below="@id/save_iv"
+            android:layout_marginRight="95dip"
+            android:text="@string/save"
+            android:textColor="#ff000000" />
+    </RelativeLayout>
+
+</RelativeLayout>
