@@ -65,6 +65,7 @@ public class AddActivity extends Activity {
 	private static final int PICK_CROP_IMAGE = 3;
 
 	private DBAdapter dbAdapter;
+	private int contactID;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -78,7 +79,65 @@ public class AddActivity extends Activity {
 
 		initComponent();
 
+		setComponentValues();
 		initListener();
+	}
+
+	private void setComponentValues() {
+
+		Intent intent = getIntent();
+		Bundle bundle = intent.getExtras();
+		if (bundle != null && !bundle.isEmpty()) {
+			contactID  = bundle.getInt("contact_id");
+			Cursor myCursor = dbAdapter.quryItemById(contactID);
+			mNameTv.setText(myCursor.getString(myCursor
+					.getColumnIndexOrThrow(DBAdapter.NAME)));
+			mCompanyTv.setText(myCursor.getString(myCursor
+					.getColumnIndexOrThrow(DBAdapter.COMPANY)));
+			mPersontityTv.setText(myCursor.getString(myCursor
+					.getColumnIndexOrThrow(DBAdapter.PERSONALITY)));
+
+			mPositionTv.setText(myCursor.getString(myCursor
+					.getColumnIndexOrThrow(DBAdapter.POSITION)));
+			mPhoneTv.setText(myCursor.getString(myCursor
+					.getColumnIndexOrThrow(DBAdapter.PHONE_NUM)));
+			mQqTv.setText(myCursor.getString(myCursor
+					.getColumnIndexOrThrow(DBAdapter.QQ)));
+			mEmailTv.setText(myCursor.getString(myCursor
+					.getColumnIndexOrThrow(DBAdapter.EMAIL)));
+			mDateTv.setText(myCursor.getString(myCursor
+					.getColumnIndexOrThrow(DBAdapter.DATA)));
+
+			if (myCursor.getInt(myCursor.getColumnIndexOrThrow(DBAdapter.SEX)) == 1) {
+				mFemaleRadioBtn.setChecked(true);
+			} else {
+				mManRadioBtn.setChecked(true);
+			}
+
+			String imagePath = "";
+			if (null != myCursor.getString(myCursor
+					.getColumnIndexOrThrow(DBAdapter.IMAGEPATH))
+					&& myCursor
+							.getString(
+									myCursor.getColumnIndexOrThrow(DBAdapter.IMAGEPATH))
+							.length() > 0) {
+				imagePath = myCursor.getString(myCursor
+						.getColumnIndexOrThrow(DBAdapter.IMAGEPATH));
+			}
+
+			Bitmap bitmap = null;
+			if (null != imagePath && !"".equals(imagePath)) {
+				bitmap = BitmapFactory.decodeFile(imagePath);
+			} else {
+				bitmap = BitmapFactory.decodeResource(
+						AddActivity.this.getResources(),
+						R.drawable.default_icon);
+			}
+			mAvatarImg.setImageBitmap(bitmap);
+			myCursor.close();
+
+		}
+
 	}
 
 	private void initComponent() {
@@ -190,23 +249,35 @@ public class AddActivity extends Activity {
 				}
 				if (null == mNameTv.getText()
 						|| mNameTv.getText().toString().trim().length() == 0) {
-					Toast.makeText(AddActivity.this, "请输入信息！", Toast.LENGTH_SHORT).show();
+					Toast.makeText(AddActivity.this, "请输入信息！",
+							Toast.LENGTH_SHORT).show();
 					return;
 				}
-				dbAdapter.insertItem(mDateTv.getText().toString(), mNameTv
+				if(contactID > 0){
+					dbAdapter.updateItem(contactID,mDateTv.getText().toString(), mNameTv
+							.getText().toString(), mCompanyTv.getText().toString(),
+							mPositionTv.getText().toString(), mPhoneTv.getText()
+									.toString(), mQqTv.getText().toString(),
+							mEmailTv.getText().toString(), mPersontityTv.getText()
+									.toString(), mAvatarPath, sex, 0);
+					
+					Intent mIntent = new Intent();
+					setResult(RESULT_OK, mIntent);
+				}else{
+					dbAdapter.insertItem(mDateTv.getText().toString(), mNameTv
 						.getText().toString(), mCompanyTv.getText().toString(),
 						mPositionTv.getText().toString(), mPhoneTv.getText()
 								.toString(), mQqTv.getText().toString(),
 						mEmailTv.getText().toString(), mPersontityTv.getText()
 								.toString(), mAvatarPath, sex, 0);
-
+				}
 				finish();
 
 			}
 		});
-		
+
 		mBackImg.setOnClickListener(new OnClickListener() {
-			
+
 			@Override
 			public void onClick(View v) {
 				finish();
@@ -321,18 +392,14 @@ public class AddActivity extends Activity {
 		cursor.moveToFirst();
 		return cursor.getString(column_index);
 	}
-	
-	 @Override
-	    public void onConfigurationChanged(Configuration newConfig)
-	    {
-	        super.onConfigurationChanged(newConfig);
-	     if (this.getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE)
-	     {
-	//land
-	     }
-	     else if (this.getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT)
-	     {
-	//port
-	     }
-	    } 
+
+	@Override
+	public void onConfigurationChanged(Configuration newConfig) {
+		super.onConfigurationChanged(newConfig);
+		if (this.getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
+			// land
+		} else if (this.getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
+			// port
+		}
+	}
 }

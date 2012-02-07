@@ -26,11 +26,12 @@
         android:layout_height="wrap_content" >
 
         <TextView
+            android:id="@+id/head_count"
             android:layout_width="match_parent"
             android:layout_height="30dp"
             android:background="@drawable/background"
             android:gravity="center"
-            android:text="@string/fengcuiyuan"
+            android:text="@string/group_name"
             android:textColor="#ffffffff"
             android:textSize="20sp" />
     </RelativeLayout>

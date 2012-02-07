@@ -83,6 +83,12 @@ public class ContactListAdapter extends BaseAdapter {
 	        holder=(Viewholder)convertView.getTag();
 	      }
 	    
+	    if(position%2 !=0){
+	    	convertView.setBackgroundColor(0xfff6f5ec);
+	    }else{
+	    	convertView.setBackgroundColor(0xffffffff);
+	    }
+	    
 	    ContactInfo info = mContactList.get(position);
 	    holder.name.setText(info.getName());
 	    holder.sex.setText(info.getSex());

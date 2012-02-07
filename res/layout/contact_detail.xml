@@ -154,7 +154,7 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_marginRight="5dip"
-            android:layout_marginTop="3dip"
+            android:gravity="center_vertical"
             android:textColor="#ff000000"
             android:textSize="16sp" />
     </LinearLayout>
@@ -185,7 +185,7 @@
             android:layout_width="fill_parent"
             android:layout_height="38dp"
             android:layout_marginRight="5dip"
-            android:layout_marginTop="3dip"
+            android:gravity="center_vertical"
             android:textColor="#ff000000"
             android:textSize="16sp" />
     </LinearLayout>
@@ -215,7 +215,7 @@
             android:layout_width="fill_parent"
             android:layout_height="38dp"
             android:layout_marginRight="5dip"
-            android:layout_marginTop="3dip"
+            android:gravity="center_vertical"
             android:textColor="#ff000000"
             android:textSize="16sp" />
     </LinearLayout>
@@ -246,7 +246,7 @@
             android:layout_width="fill_parent"
             android:layout_height="38dp"
             android:layout_marginRight="3dip"
-            android:layout_marginTop="3dip"
+            android:gravity="center_vertical"
             android:textColor="#ff000000"
             android:textSize="16sp" />
     </LinearLayout>
@@ -276,7 +276,7 @@
             android:layout_width="fill_parent"
             android:layout_height="38dp"
             android:layout_marginRight="5dip"
-            android:layout_marginTop="3dip"
+            android:gravity="center_vertical"
             android:textColor="#ff000000"
             android:textSize="16sp" />
     </LinearLayout>
@@ -305,12 +305,14 @@
         <TextView
             android:id="@+id/sex_tv"
             android:layout_width="fill_parent"
-            android:layout_height="38dp"
+            android:layout_height="wrap_content"
             android:layout_marginRight="3dip"
-            android:layout_marginTop="3dip"
+            android:gravity="center_vertical"
+            android:text="dsd是多少"
             android:textColor="#ff000000"
             android:textSize="16sp" />
     </LinearLayout>
+
     <TextView
         android:layout_width="fill_parent"
         android:layout_height="1dp"

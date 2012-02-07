@@ -9,18 +9,24 @@ import android.content.res.Configuration;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.Paint;
+import android.graphics.Bitmap.Config;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.leao.contacts.db.DBAdapter;
 import com.leao.contacts.pojo.ContactInfo;
 
-public class ContactListActivity extends Activity implements OnItemClickListener {
+public class ContactListActivity extends Activity implements
+		OnItemClickListener {
 
 	protected static final int INITFINISH = 1001;
 	private DBAdapter dbAdapter;
@@ -29,6 +35,10 @@ public class ContactListActivity extends Activity implements OnItemClickListener
 	private ListView mItemlist = null;
 	private ProgressDialog mProgressDialog;
 	private Handler mHandler;
+	private int mTotalCount;
+	private int currentPosition = 0;
+
+	private TextView mHeadCountTv;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -39,9 +49,40 @@ public class ContactListActivity extends Activity implements OnItemClickListener
 		dbAdapter = new DBAdapter(this);
 		dbAdapter.open();
 		mItemlist = (ListView) findViewById(R.id.list);
-
+		mItemlist.setOnItemClickListener(this);
+		mItemlist.setOnItemLongClickListener(itemLongClickListener);
+		mHeadCountTv = (TextView) findViewById(R.id.head_count);
 		handleMessage();
 		initContactInfos();
+	}
+
+	private OnItemLongClickListener itemLongClickListener = new OnItemLongClickListener() {
+		@Override
+		public boolean onItemLongClick(AdapterView<?> parent, View view,
+				int position, long id) {
+			ContactInfo info = mContactList.get(position);
+			Intent intent = new Intent(ContactListActivity.this,
+					AddActivity.class);
+			intent.putExtra("contact_id", info.getId());
+			currentPosition = position;
+			startActivityForResult(intent, 1);
+			return true;
+		}
+	};
+
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		if (resultCode != RESULT_OK) {
+			return;
+		}
+		switch (requestCode) {
+		case 1:
+			initContactInfos();
+			break;
+
+		default:
+			break;
+		}
 	}
 
 	private void handleMessage() {
@@ -67,11 +108,16 @@ public class ContactListActivity extends Activity implements OnItemClickListener
 		ContactListAdapter adapter = new ContactListAdapter(this, mContactList);
 		mItemlist.setAdapter(adapter);
 		adapter.notifyDataSetChanged();
-		 dismissProgressDialog();
+		mItemlist.setSelection(currentPosition);
+		mHeadCountTv.setText(String.format(mHeadCountTv.getText().toString(),
+				getString(R.string.fengcuiyuan), mTotalCount,
+				mContactList.size()));
+		dismissProgressDialog();
+
 	}
 
 	private void initContactInfos() {
-		 showProgressDialog(true);
+		showProgressDialog(true);
 		new Thread() {
 			@Override
 			public void run() {
@@ -80,6 +126,7 @@ public class ContactListActivity extends Activity implements OnItemClickListener
 					Cursor myCursor = dbAdapter.quryItems(0);
 					myCursor.moveToFirst();
 					int count = myCursor.getCount();
+					mTotalCount = count;
 					for (int i = 0; i < count; i++) {
 
 						ContactInfo info = new ContactInfo();
@@ -87,7 +134,7 @@ public class ContactListActivity extends Activity implements OnItemClickListener
 						info.setName(myCursor.getString(myCursor
 								.getColumnIndexOrThrow(DBAdapter.NAME)));
 						info.setPosition(myCursor.getString(myCursor
-								.getColumnIndexOrThrow(DBAdapter.COMPANY)));
+								.getColumnIndexOrThrow(DBAdapter.POSITION)));
 						info.setPersontity(myCursor.getString(myCursor
 								.getColumnIndexOrThrow(DBAdapter.PERSONALITY)));
 
@@ -113,12 +160,28 @@ public class ContactListActivity extends Activity implements OnItemClickListener
 						}
 
 						Bitmap bitmap = null;
-						if(null != imagePath && !"".equals(imagePath)){
+						if (null != imagePath && !"".equals(imagePath)) {
 							bitmap = BitmapFactory.decodeFile(imagePath);
-						}else{
-							bitmap = BitmapFactory.decodeResource(ContactListActivity.this.getResources(), R.drawable.default_icon);
+						} else {
+							bitmap = BitmapFactory.decodeResource(
+									ContactListActivity.this.getResources(),
+									R.drawable.default_icon);
 						}
-						info.setImage(bitmap);
+
+						int width = bitmap.getWidth();
+						int height = bitmap.getHeight();
+						Bitmap mbmpTest = Bitmap.createBitmap(width, height,
+								Config.RGB_565);
+						Canvas canvasTemp = new Canvas(mbmpTest);
+						Paint p = new Paint();
+						canvasTemp.drawBitmap(bitmap, 0, 0, p);
+						Bitmap callBitmap = BitmapFactory.decodeResource(
+								getResources(), R.drawable.call);
+						canvasTemp.drawBitmap(callBitmap, width - callBitmap.getHeight(),
+								height - callBitmap.getHeight(), p);
+						bitmap.recycle();
+						callBitmap.recycle();
+						info.setImage(mbmpTest);
 						mContactList.add(info);
 						myCursor.moveToNext();
 					}
@@ -167,10 +230,10 @@ public class ContactListActivity extends Activity implements OnItemClickListener
 	public void onItemClick(AdapterView<?> parent, View view, int position,
 			long id) {
 		ContactInfo info = mContactList.get(position);
-		Intent intent = new Intent(ContactListActivity.this,ContactsDatail.class);
+		Intent intent = new Intent(ContactListActivity.this,
+				ContactsDatail.class);
 		intent.putExtra("contact_id", info.getId());
 		startActivity(intent);
-		
-		
+
 	}
 }
